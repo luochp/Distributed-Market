@@ -2,10 +2,10 @@ package io.rmi.demo;
 
 public class Peer2 {
     public Peer2() {
-        Thread seller = new Thread(new SellerRunnable(8001, "HotDog"));
-        Thread buyer = new Thread(new BuyerRunnable(8000, "Fish"));
-        seller.start();
-        buyer.start();
+        Thread server = new Thread(new Server(8001, "Adder"));
+        Thread client = new Thread(new Client(8000, "Subtractor"));
+        server.start();
+        client.start();
     }
 
     public static void main(String[] args) {

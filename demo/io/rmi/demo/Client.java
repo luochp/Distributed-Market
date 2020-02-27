@@ -2,23 +2,27 @@ package io.rmi.demo;
 
 import java.net.InetAddress;
 import java.rmi.Naming;
+import java.util.Scanner;
 
-public class BuyerRunnable implements Runnable{
-    private BuyerImpl node1 = null;
-
+public class Client implements Runnable{
     @Override
     public void run() {
 
     }
 
-    public BuyerRunnable(int port, String name) {
+    public Client(int port, String name) {
+        Scanner in = new Scanner(System.in);
         while(true) {
+            System.out.println("Requesting " + name);
             try {
-                System.out.println("Buying " + name);
                 Thread.sleep(5000);
                 String host = InetAddress.getLocalHost().getHostAddress();
                 Peer peer = (Peer) Naming.lookup("//" + host + ":" + port + "/" + name);
-                peer.cmdInterface();
+                System.out.println("Enter a: ");
+                int a = in.nextInt();
+                System.out.println("Enter b: ");
+                int b = in.nextInt();
+                System.out.println("Result: " + peer.service(a, b));
             } catch (Exception e) {
                 System.out.println(e.getMessage());
             }

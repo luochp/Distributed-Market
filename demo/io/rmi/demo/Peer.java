@@ -4,5 +4,5 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 public interface Peer extends Remote {
-    public void cmdInterface() throws RemoteException;
+    public int service(int a, int b) throws RemoteException;
 }

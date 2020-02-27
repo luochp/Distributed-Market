@@ -2,6 +2,7 @@ package io.rmi.demo;
 
 import java.rmi.RemoteException;
 
-public interface Buyer extends Peer {
+public interface Adder extends Peer {
+    public int service(int a, int b) throws RemoteException;
     public int add(int a, int b) throws RemoteException;
 }

@@ -3,7 +3,7 @@ package io.rmi.demo;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
-public class SellerRunnable implements Runnable {
+public class Server implements Runnable {
     private Peer peer = null;
 
     @Override
@@ -11,15 +11,15 @@ public class SellerRunnable implements Runnable {
 
     }
 
-    public SellerRunnable(int port, String name) {
+    public Server(int port, String name) {
         try {
             Registry registry = LocateRegistry.createRegistry(port);
             switch(name) {
-                case "HotDog":
-                    peer = new SellerImpl();
+                case "Subtractor":
+                    peer = new SubtractorImpl();
                     break;
-                case "Fish":
-                    peer = new BuyerImpl();
+                case "Adder":
+                    peer = new AdderImpl();
                     break;
                 default:
                     System.out.println("Can't find " + name);
