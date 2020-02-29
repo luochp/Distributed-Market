@@ -18,4 +18,9 @@ public class SubtractorImpl extends UnicastRemoteObject implements Subtractor {
     public int subtract(int a, int b) throws RemoteException {
         return a - b;
     }
+    
+    @Override
+    public int multiply(int a, int b) throws RemoteException {
+        return a*b;
+    }
 }

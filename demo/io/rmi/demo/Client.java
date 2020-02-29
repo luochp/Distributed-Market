@@ -22,7 +22,7 @@ public class Client implements Runnable{
                 int a = in.nextInt();
                 System.out.println("Enter b: ");
                 int b = in.nextInt();
-                System.out.println("Result: " + peer.service(a, b));
+                System.out.println("Result: " + peer.multiply(a, b));
             } catch (Exception e) {
                 System.out.println(e.getMessage());
             }

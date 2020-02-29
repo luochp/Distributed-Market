@@ -2,15 +2,27 @@ import java.io.*;
 import java.util.*;
 
 
-public class Buyer extends Node {
+public class Buyer extends Peer {
 
-    public Buyer(int myPeerID, int NodeType, String myIP,List<String> neighborPeerID, Map<Integer, String> peerIPMap ){
-        super(myPeerID, NodeType, myIP, neighborPeerID, peerIPMap);
+    public Buyer(int peerID, int peerType, IP ip, List<Integer> neighborPeerID, Map<Integer, IP> peerIDIPMap ){
+        super(peerID, peerType, ip, neighborPeerID, peerIDIPMap);
         System.out.println("Buyer Initiated");
     }
 
-    public void lookup(){
-        // Look up for product function
+    protected void handleLookUp(Message m) {
+
     }
+
+    protected void handleReply(Message m) {
+
+    }
+
+    // No one will send "BUY" message to buyer
+    protected void handleBuy(Message m) {
+        return;
+    }
+
+
+
 
 }

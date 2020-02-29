@@ -17,4 +17,9 @@ public class AdderImpl extends UnicastRemoteObject implements Adder {
     public int add(int a, int b) throws RemoteException {
         return a + b;
     }
+
+    @Override
+    public int multiply(int a, int b) throws RemoteException {
+        return a*b;
+    }
 }

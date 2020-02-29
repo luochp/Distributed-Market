@@ -2,20 +2,24 @@ import java.io.*;
 import java.util.*;
 
 
-public class BuyerAndSeller extends Node {
+public class BuyerAndSeller extends Peer {
 
-    public BuyerAndSeller(int myPeerID,int NodeType,  String myIP,List<String> neighborPeerID, Map<Integer, String> peerIPMap ){
-        super(myPeerID, NodeType, myIP, neighborPeerID, peerIPMap);
+    public BuyerAndSeller(int peerID, int peerType, IP ip, List<Integer> neighborPeerID, Map<Integer, IP> peerIDIPMap ){
+        super(peerID, peerType, ip, neighborPeerID, peerIDIPMap);
         System.out.println("BuyerAndSeller Initiated");
     }
 
-    public void lookup(){
-        // Look up for product function
+    protected void handleLookUp(Message m) {
+
     }
 
+    protected void handleReply(Message m) {
 
-    public void reply(){
-        // Reply for Lookup Request
     }
+
+    protected void handleBuy(Message m) {
+
+    }
+
 
 }
