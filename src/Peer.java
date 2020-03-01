@@ -38,12 +38,17 @@ public class Peer {
 
     // When Seller send "REPLY" back to buyer, mid nodes need to pass message backward the routepath
     public void backward(Message m){
-
+        int lastIndex = m.getRoutePath().size();
+        int prevPeerID = m.getRoutePath().remove(lastIndex);
+        send(prevPeerID, m);
     }
 
     // Spread message to all its neighbor
     public void spread(Message m){
-
+        for(int peerID: peerIDIPMap.keySet()) {
+            IP ip = peerIDIPMap.get(peerID);
+            
+        }
     }
 
 

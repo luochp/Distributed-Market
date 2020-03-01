@@ -1,4 +1,9 @@
 import java.io.*;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.rmi.Naming;
+import java.rmi.Remote;
+import java.rmi.RemoteException;
 import java.util.*;
 
 
@@ -24,13 +29,25 @@ public class Buyer extends Peer {
         }
     }
 
-
     protected void handleLookUp(Message m) {
-
+        m.getRoutePath().add(peerID);
+        spread(m);
     }
 
     protected void handleReply(Message m) {
-
+        if(peerID == m.getBuyerPeerID()) { // initial buyer
+            try { // connect to seller directly
+                String host = InetAddress.getLocalHost().getHostAddress();
+                RemoteInterface serverFunction = (RemoteInterface) Naming.lookup("//" + host + ":" + m.getSellerIP().getPort() + "/" + "RMIserver");
+                serverFunction.handleBuy();
+            } catch(Exception e) {
+                System.out.println(e.getMessage());
+            }
+        } else { // mid node
+            int lastIndex = m.getRoutePath().size() - 1;
+            m.getRoutePath().remove(lastIndex);
+            backward(m);
+        }
     }
 
     // No one will send "BUY" message to buyer
@@ -45,7 +62,6 @@ public class Buyer extends Peer {
         System.out.println("MessageID:" + m.getID() + ", Buyer " + this.peerID + ", LookUp " + m.getItemType() );
         spread(m);
     }
-
 
 
 }
