@@ -15,6 +15,8 @@ public class Node implements Runnable {
 
     public Queue<Message> messageQueue;
 
+    public static int INTERVAL_TIME =  5000;
+
     public Node(int peerID, int peerType, IP ip, List<Integer> neighborPeerID, Map<Integer, IP> peerIDIPMap){
         this.peerID = peerID;
         this.ip = ip;
@@ -126,5 +128,6 @@ public class Node implements Runnable {
             }
         }
     }
+
 
 }

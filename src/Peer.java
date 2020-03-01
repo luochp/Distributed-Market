@@ -41,6 +41,11 @@ public class Peer {
 
     }
 
+    // Spread message to all its neighbor
+    public void spread(Message m){
+
+    }
+
 
 
 }
