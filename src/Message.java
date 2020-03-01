@@ -89,6 +89,10 @@ public class Message implements Serializable{
         return this.operationType;
     }
 
+    public List<Integer> getRoutePath() {
+        return this.routePath;
+    }
+
     public static enum  Operation {
         LOOKUP,
         REPLY,

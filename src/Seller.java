@@ -30,7 +30,7 @@ public class Seller extends Peer {
 
     protected void handleReply(Message m) {
         int lastIndex = m.getRoutePath().size() - 1;
-        int prevPeerID = m.getRoutePath().remove(lastIndex); // remove itself from route path
+        m.getRoutePath().remove(lastIndex); // remove itself from route path
         backward(m);
     }
 

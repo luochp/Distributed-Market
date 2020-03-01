@@ -32,20 +32,21 @@ public class BuyerAndSeller extends Peer {
         if(peerID == m.getBuyerPeerID()) { // initial buyer
             try { // connect to seller directly
                 String host = InetAddress.getLocalHost().getHostAddress();
-                RemoteInterface serverFunction = (RemoteInterface) Naming.lookup("//" + host + ":" + m.getSellerIP().getPort() + "/" + "RMIserver");
-                serverFunction.handleBuy();
+                Node.RemoteInterface serverFunction = (Node.RemoteInterface) Naming.lookup("//" + host + ":" + m.getSellerIP().getPort() + "/" + "RMIserver");
+                m.withOperationType(Message.Operation.BUY);
+                serverFunction.handleMessage(m);
             } catch(Exception e) {
                 System.out.println(e.getMessage());
             }
         } else { // mid node
             int lastIndex = m.getRoutePath().size() - 1;
-            int prevPeerID = m.getRoutePath().remove(lastIndex);
+            m.getRoutePath().remove(lastIndex); // remove itself from route path
             backward(m);
         }
     }
 
     protected void handleBuy(Message m) {
-
+        stock--;
     }
 
 
