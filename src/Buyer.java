@@ -81,7 +81,7 @@ public class Buyer extends Peer {
         new latencyBuyThread().start();
 
         System.out.println( "Buyer " + this.peerID +
-                            " LookUp " + m.getItemType() +
+                            " LookUp product " + m.getItemType() +
                             " MessageID " + m.getID() );
         spread(m);
     }
@@ -114,8 +114,8 @@ public class Buyer extends Peer {
             buyM = buyM.withOperationType(Message.Operation.BUY);
             sendMessage(buyM, buyM.getSellerIP());
             System.out.println( "Peer " + this.peerID +
-                                " BUY " + buyM.getItemType() +
-                                " from Peer " + buyM.getBuyerPeerID());
+                                " BUY product " + buyM.getItemType() +
+                                " from Peer " + buyM.getSellerPeerID());
         }
     }
 
