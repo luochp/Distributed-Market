@@ -67,10 +67,12 @@ public class Seller extends Peer {
             }
         }
         else {      // cannot provide goods
+            /*
             System.out.println( " Peer " + this.peerID +
                                 " Spread LookUp from " + m.getBuyerPeerID() +
                                 " for " + m.getItemType() +
                                 " MessageID " + m.getID() );
+            */
             m.routePathAddRear(this.ip);
             spread(m);
         }

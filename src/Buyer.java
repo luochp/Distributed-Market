@@ -95,7 +95,7 @@ public class Buyer extends Peer {
         replyPool = new HashSet<>();
         new latencyBuyThread().start();
 
-        System.out.println( " Buyer " + this.peerID +
+        System.out.println( "Buyer " + this.peerID +
                             " LookUp " + m.getItemType() +
                             " MessageID " + m.getID() );
         spread(m);
@@ -128,9 +128,9 @@ public class Buyer extends Peer {
         else{
             buyM = buyM.withOperationType(Message.Operation.BUY);
             sendMessage(buyM, buyM.getSellerIP());
-            System.out.println( " Peer " + this.peerID +
+            System.out.println( "Peer " + this.peerID +
                                 " BUY " + buyM.getItemType() +
-                                " from Peer" + buyM.getBuyerPeerID());
+                                " from Peer " + buyM.getBuyerPeerID());
         }
     }
 
