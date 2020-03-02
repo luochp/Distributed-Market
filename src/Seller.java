@@ -72,20 +72,13 @@ public class Seller extends Peer {
     }
 
     protected void handleReply(Message m) {
-        /*
-        int lastIndex = m.getRoutePath().size() - 1;
-        m.getRoutePath().remove(lastIndex); // remove itself from route path
         backward(m);
-
-         */
     }
 
     protected void handleBuy(Message m) {
-        /*
-        System.out.println("MessageID:" + m.getID() + ", Seller " + this.peerID + ", handleBuy " + m.getItemType() );
+        System.out.println("MessageID:" + m.getID() + ", Seller " + this.peerID + ", handleBuy " + m.getItemType() + "from" + m.getBuyerPeerID());
+        holdSetRemove(m);
         stock--;
-
-         */
     }
 
     // Check if holdSet has message m inside
@@ -115,6 +108,16 @@ public class Seller extends Peer {
         if (stock == 0){
             productType = Math.abs(new Random().nextInt()%3);
             stock = new Random().nextInt(5);
+        }
+    }
+
+    private void holdSetRemove(Message m){
+        Iterator<Message> iterator = holdSet.iterator();
+        while (iterator.hasNext()) {
+            Message msg = iterator.next();
+            if ( msg.getID() == m.getID() ) {
+                iterator.remove();
+            }
         }
     }
 

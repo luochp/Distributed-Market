@@ -9,6 +9,9 @@ import java.util.*;
 
 public class Buyer extends Peer {
 
+    private int currentRequestMessageID = 0;
+    private HashSet<Message> replyPool = new HashSet<>();   // Record all replys from other sellers
+
     public Buyer(int peerID, int peerType, IP ip, List<Integer> neighborPeerID, Map<Integer, IP> peerIDIPMap ){
         super(peerID, peerType, ip, neighborPeerID, peerIDIPMap);
         System.out.println("Buyer Initiated");
@@ -22,6 +25,21 @@ public class Buyer extends Peer {
                 LookUp();
                 try {
                     Thread.sleep(Node.INTERVAL_TIME);
+                } catch (Exception e) {
+                    System.out.println(e);
+                }
+            }
+        }
+    }
+
+    public class CheckReplyMessageAndBuyThread extends Thread{
+        public void run() {
+            while(true){
+
+                LookUp();
+
+                try {
+                    Thread.sleep((int)(Node.INTERVAL_TIME/2));
                 } catch (Exception e) {
                     System.out.println(e);
                 }
@@ -48,25 +66,17 @@ public class Buyer extends Peer {
     }
 
     protected void handleReply(Message m) {
-        /*
         if(peerID == m.getBuyerPeerID()) { // initial buyer
-            try { // connect to seller directly
-                String host = InetAddress.getLocalHost().getHostAddress();
-                Node.RemoteInterface serverFunction = (Node.RemoteInterface) Naming.lookup("//" + host + ":" + m.getSellerIP().getPort() + "/" + "RMIserver");
-                System.out.println("//" + host + ":" + m.getSellerIP().getPort() + "/" + "RMIserver");
-                m.withOperationType(Message.Operation.BUY);
-                System.out.println("MessageID:" + m.getID() + ", Buyer " + this.peerID + ", handleReply " + m.getItemType() );
-                serverFunction.handleMessage(m);
-            } catch(Exception e) {
-                System.out.println(e.getMessage());
+            if (currentRequestMessageID == m.getID()){
+                synchronized(replyPool){
+                    replyPool.add( m );
+                    return;
+                }
             }
         } else { // mid node
-            int lastIndex = m.getRoutePath().size() - 1;
-            m.getRoutePath().remove(lastIndex); // remove itself from route path
-            System.out.println("MessageID:" + m.getID() + ", Buyer " + this.peerID + ", handleReply " + m.getItemType() );
             backward(m);
         }
-        */
+
     }
 
     // No one will send "BUY" message to buyer
@@ -83,9 +93,57 @@ public class Buyer extends Peer {
         m.routePathAddRear(this.ip);
         m.hopAddOne();
 
+        currentRequestMessageID = m.getID();
+        replyPool = new HashSet<>();
+        new latencyBuyThread().start();
+
         System.out.println("MessageID:" + m.getID() + ", Buyer " + this.peerID + ", LookUp " + m.getItemType() );
         spread(m);
     }
 
+    // after sending out LOOKUP over a specific amount of time, attemp to BUY it.
+    private class latencyBuyThread extends Thread{
+
+        public latencyBuyThread(){
+        }
+        public void run() {
+            try {
+                Thread.sleep( (int)(Node.INTERVAL_TIME)/2 );
+                sendBuyMessage();
+            }catch(InterruptedException ie){
+                System.out.println(ie);
+            }
+        }
+    }
+
+    private void sendBuyMessage(){
+        Message buyM;
+        synchronized(replyPool) {
+            buyM = randomPickSeller();
+        }
+        if(buyM == null){
+            System.out.println("No Buyer found!" );
+            return;
+        }
+        else{
+            buyM = buyM.withOperationType(Message.Operation.BUY);
+            sendMessage(buyM, buyM.getSellerIP());
+            System.out.println("Peer " + this.peerID
+                               + " send  BUY message " + buyM.getID()
+                               + " to seller " + buyM.getBuyerPeerID()
+                               + " for product " + buyM.getItemType());
+        }
+    }
+
+    private Message randomPickSeller(){
+        if(replyPool.size() > 0){
+            Iterator<Message> itr = replyPool.iterator();
+            if(itr.hasNext()){
+                Message m = itr.next();
+                return m;
+            }
+        }
+        return null;
+    }
 
 }
