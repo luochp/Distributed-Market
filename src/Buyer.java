@@ -14,8 +14,6 @@ public class Buyer extends Peer {
 
     public Buyer(int peerID, int peerType, IP ip, List<Integer> neighborPeerID, Map<Integer, IP> peerIDIPMap ){
         super(peerID, peerType, ip, neighborPeerID, peerIDIPMap);
-        System.out.println("Buyer Initiated");
-
         new LookUpThread().start();
     }
 
@@ -97,7 +95,9 @@ public class Buyer extends Peer {
         replyPool = new HashSet<>();
         new latencyBuyThread().start();
 
-        System.out.println("MessageID:" + m.getID() + ", Buyer " + this.peerID + ", LookUp " + m.getItemType() );
+        System.out.println( " Buyer " + this.peerID +
+                            " LookUp " + m.getItemType() +
+                            " MessageID " + m.getID() );
         spread(m);
     }
 
@@ -122,16 +122,15 @@ public class Buyer extends Peer {
             buyM = randomPickSeller();
         }
         if(buyM == null){
-            System.out.println("No Buyer found!" );
+            System.out.println("No Seller found!" );
             return;
         }
         else{
             buyM = buyM.withOperationType(Message.Operation.BUY);
             sendMessage(buyM, buyM.getSellerIP());
-            System.out.println("Peer " + this.peerID
-                               + " send  BUY message " + buyM.getID()
-                               + " to seller " + buyM.getBuyerPeerID()
-                               + " for product " + buyM.getItemType());
+            System.out.println( " Peer " + this.peerID +
+                                " BUY " + buyM.getItemType() +
+                                " from Peer" + buyM.getBuyerPeerID());
         }
     }
 

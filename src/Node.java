@@ -78,9 +78,6 @@ public class Node implements Runnable {
 
         @Override
         public void send(Message m) throws RemoteException {
-            System.out.println("Received: " +
-                               " Message id:" + m.getID() +
-                               " Message Type: " + m.getOperationType());
             messageQueue.add(m);
         }
     }

@@ -39,7 +39,7 @@ public class Main{
 
         // Create Nodes and Run Nodes
         //myPeerID, NodeType, myIP, neighborPeerID, peerIPMap
-        System.out.println("myPeerID = "+peerID);
+        System.out.println("PeerID " + peerID);
         System.out.println("NodeType = "+nodeType);
         System.out.println("myIP = "+nodeIP.toString());
         System.out.println("neighborPeerID:");

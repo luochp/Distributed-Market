@@ -18,7 +18,6 @@ public class Seller extends Peer {
 
         new StockAndHoldSetCheckThread().start();
 
-        System.out.println("Seller Initiated");
     }
 
     public class StockAndHoldSetCheckThread extends Thread{
@@ -54,7 +53,10 @@ public class Seller extends Peer {
                 return;
             }
             else{   // new lookup message
-                System.out.println( "MessageID:" + m.getID() + ", Buyer " + m.getBuyerPeerID() + ", REPLY " + m.getItemType() );
+                System.out.println( " Peer " + this.peerID +
+                                    " Reply LookUp from " + m.getBuyerPeerID() +
+                                    " for " + m.getItemType() +
+                                    " MessageID " + m.getID() );
                 m.startHold(System.currentTimeMillis());
                 holdSet.add(m);
                 // send "REPLY" message
@@ -65,7 +67,10 @@ public class Seller extends Peer {
             }
         }
         else {      // cannot provide goods
-            System.out.println( "MessageID:" + m.getID() + ", Buyer " + m.getBuyerPeerID() + ", Spread " + m.getItemType() );
+            System.out.println( " Peer " + this.peerID +
+                                " Spread LookUp from " + m.getBuyerPeerID() +
+                                " for " + m.getItemType() +
+                                " MessageID " + m.getID() );
             m.routePathAddRear(this.ip);
             spread(m);
         }
@@ -76,7 +81,11 @@ public class Seller extends Peer {
     }
 
     protected void handleBuy(Message m) {
-        System.out.println("MessageID:" + m.getID() + ", Seller " + this.peerID + ", handleBuy " + m.getItemType() + "from" + m.getBuyerPeerID());
+        System.out.println( " Peer " + this.peerID +
+                " received BUY from " + m.getBuyerPeerID() +
+                " for " + m.getItemType() +
+                " and Sold it" +
+                " MessageID " + m.getID() );
         holdSetRemove(m);
         stock--;
     }
