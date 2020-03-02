@@ -23,7 +23,7 @@ public class BuyerAndSeller extends Peer {
              .withSellerIP(ip);
             backward(m);
         } else { // mid node
-            m.getRoutePath().add(peerID);
+            m.getRoutePath().add(ip);
             spread(m);
         }
     }
@@ -46,6 +46,7 @@ public class BuyerAndSeller extends Peer {
     }
 
     protected void handleBuy(Message m) {
+        System.out.println("MessageID:" + m.getID() + ", BuyerAndSeller " + this.peerID + ", handleBuy " + m.getItemType() );
         stock--;
     }
 

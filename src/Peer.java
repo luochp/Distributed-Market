@@ -41,12 +41,11 @@ public class Peer {
 
     // When Seller send "REPLY" back to buyer, mid nodes need to pass message backward the routepath
     public void backward(Message m){
-        int lastIndex = m.getRoutePath().size();
-        int prevPeerID = m.getRoutePath().remove(lastIndex);
+        int lastIndex = m.getRoutePath().size() - 1;
+        IP prevIP = m.getRoutePath().remove(lastIndex);
         try {
-            String host = InetAddress.getLocalHost().getHostAddress();
-            IP ip = peerIDIPMap.get(prevPeerID);
-            Node.RemoteInterface serverFunction = (Node.RemoteInterface) Naming.lookup("//" + host + ":" + ip.getPort() + "/" + "RMIserver");
+            System.out.println("Reply to IP " + "//" + prevIP.getAddr() + ":" + prevIP.getPort() );
+            Node.RemoteInterface serverFunction = (Node.RemoteInterface) Naming.lookup("//" + prevIP.getAddr() + ":" + prevIP.getPort() + "/" + "RMIserver");
             serverFunction.handleMessage(m);
         } catch(Exception e) {
             System.out.println(e.getMessage());
@@ -55,6 +54,15 @@ public class Peer {
 
     // Spread message to all its neighbor
     public void spread(Message m){
+        // node has been visited
+        for(IP routeIP: m.getRoutePath()) {
+            if(ip.getAddr().equals(routeIP.getAddr()) && ip.getPort() == routeIP.getPort()) {
+                return;
+            }
+        }
+
+        m.getRoutePath().add(ip);
+
         try {
             String host = InetAddress.getLocalHost().getHostAddress();
             for (int peerID : peerIDIPMap.keySet()) {

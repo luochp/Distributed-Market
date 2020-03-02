@@ -30,7 +30,7 @@ public class Buyer extends Peer {
     }
 
     protected void handleLookUp(Message m) {
-        m.getRoutePath().add(peerID);
+        m.getRoutePath().add(ip);
         spread(m);
     }
 
@@ -39,7 +39,9 @@ public class Buyer extends Peer {
             try { // connect to seller directly
                 String host = InetAddress.getLocalHost().getHostAddress();
                 Node.RemoteInterface serverFunction = (Node.RemoteInterface) Naming.lookup("//" + host + ":" + m.getSellerIP().getPort() + "/" + "RMIserver");
+                System.out.println("//" + host + ":" + m.getSellerIP().getPort() + "/" + "RMIserver");
                 m.withOperationType(Message.Operation.BUY);
+                System.out.println("MessageID:" + m.getID() + ", Buyer " + this.peerID + ", handleReply " + m.getItemType() );
                 serverFunction.handleMessage(m);
             } catch(Exception e) {
                 System.out.println(e.getMessage());
@@ -47,6 +49,7 @@ public class Buyer extends Peer {
         } else { // mid node
             int lastIndex = m.getRoutePath().size() - 1;
             m.getRoutePath().remove(lastIndex); // remove itself from route path
+            System.out.println("MessageID:" + m.getID() + ", Buyer " + this.peerID + ", handleReply " + m.getItemType() );
             backward(m);
         }
     }

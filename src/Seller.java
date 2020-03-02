@@ -13,6 +13,9 @@ public class Seller extends Peer {
 
     public Seller(int peerID, int peerType, IP ip, List<Integer> neighborPeerID, Map<Integer, IP> peerIDIPMap ){
         super(peerID, peerType, ip, neighborPeerID, peerIDIPMap);
+        productType = Math.abs(new Random().nextInt()%3);
+        stock = new Random().nextInt(100);
+
         System.out.println("Seller Initiated");
     }
 
@@ -23,7 +26,7 @@ public class Seller extends Peer {
              .withSellerIP(ip);
             backward(m);
         } else { // mid node
-            m.getRoutePath().add(peerID);
+            m.getRoutePath().add(ip);
             spread(m);
         }
     }
@@ -35,6 +38,7 @@ public class Seller extends Peer {
     }
 
     protected void handleBuy(Message m) {
+        System.out.println("MessageID:" + m.getID() + ", Seller " + this.peerID + ", handleBuy " + m.getItemType() );
         stock--;
     }
 

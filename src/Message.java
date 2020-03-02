@@ -5,7 +5,7 @@ public class Message implements Serializable{
     private int id;
     public static final int MAX_HOP = 6;
     private Operation operationType;
-    private List<Integer> routePath;   // from buyer to seller, represented by peerID
+    private List<IP> routePath;   // from buyer to seller, represented by IP
     private int buyerPeerID;           // assigned when creating the message
     private int sellerPeerID;          // assigned only when sending "REPLY" message
     private IP buyerIP;                // assigned only when sending "BUY" message
@@ -17,7 +17,7 @@ public class Message implements Serializable{
     public Message(){
         generateID();
         this.operationType = null;
-        this.routePath = new LinkedList<Integer>();
+        this.routePath = new LinkedList<IP>();
         this.buyerPeerID = -1;
         this.sellerPeerID = -1;
         this.buyerIP = null;
@@ -89,7 +89,7 @@ public class Message implements Serializable{
         return this.operationType;
     }
 
-    public List<Integer> getRoutePath() {
+    public List<IP> getRoutePath() {
         return this.routePath;
     }
 
