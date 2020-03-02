@@ -14,6 +14,9 @@ public class Message implements Serializable{
     private int itemType;
     private int hop;
 
+    private static final long MAX_HOLD_TIME = Node.INTERVAL_TIME;
+    private long holdStartTime;
+
     public Message(){
         generateID();
         this.operationType = null;
@@ -61,6 +64,17 @@ public class Message implements Serializable{
         return this;
     }
 
+    public void routePathAddRear(IP ip){
+        this.routePath.add(ip);
+    }
+
+    public IP routePathPopRear(){
+        int lastIndex = routePath.size() - 1;
+        IP rearIP = routePath.get(lastIndex);
+        routePath.remove(lastIndex);
+        return rearIP;
+    }
+
     public int getID(){
         return this.id;
     }
@@ -91,6 +105,29 @@ public class Message implements Serializable{
 
     public List<IP> getRoutePath() {
         return this.routePath;
+    }
+
+    public void hopAddOne(){
+        this.hop++;
+    }
+
+    public void hopMinusOne(){
+        this.hop--;
+    }
+
+    public int getHop(){
+        return this.hop;
+    }
+
+    public void startHold(long holdStartTime){
+        this.holdStartTime = holdStartTime;
+    }
+
+    public boolean outDate(long nowTime){
+        if( nowTime - holdStartTime >= MAX_HOLD_TIME){
+            return true;
+        }
+        return false;
     }
 
     public static enum  Operation {

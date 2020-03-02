@@ -17,6 +17,7 @@ public class BuyerAndSeller extends Peer {
     }
 
     protected void handleLookUp(Message m) {
+        /*
         if(productType == m.getItemType() && stock > 1) { // true seller with enough stocks
             m.withOperationType(Message.Operation.REPLY)
              .withSellerPeerID(peerID)
@@ -26,9 +27,12 @@ public class BuyerAndSeller extends Peer {
             m.getRoutePath().add(ip);
             spread(m);
         }
+
+         */
     }
 
     protected void handleReply(Message m) {
+        /*
         if(peerID == m.getBuyerPeerID()) { // initial buyer
             try { // connect to seller directly
                 String host = InetAddress.getLocalHost().getHostAddress();
@@ -43,11 +47,16 @@ public class BuyerAndSeller extends Peer {
             m.getRoutePath().remove(lastIndex); // remove itself from route path
             backward(m);
         }
+
+         */
     }
 
     protected void handleBuy(Message m) {
+        /*
         System.out.println("MessageID:" + m.getID() + ", BuyerAndSeller " + this.peerID + ", handleBuy " + m.getItemType() );
         stock--;
+
+         */
     }
 
 

@@ -53,6 +53,9 @@ public class Main{
 
         // Define Nodes as Buyer, Seller or Both
         System.out.print("Initialization Finished, Node Running\n");
+
+        long timeNow = System.currentTimeMillis();
+        System.out.print("time now:" + timeNow);
     }
 
 }

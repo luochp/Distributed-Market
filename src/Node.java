@@ -66,32 +66,9 @@ public class Node implements Runnable {
 
         @Override
         public void run(){
-//            System.out.println("ServerThread Running" + peer.type);
-//            /*
-//            while(true){
-//                System.out.println("ServerThread Running" + peer.type);
-//            }
-//            */
-//
-//            // Here is just a test
-//            while(true) {
-//                System.out.println("Requesting Server");
-//                try {
-//                    Thread.sleep(5000);
-//                    String host = InetAddress.getLocalHost().getHostAddress();
-//                    RemoteInterface serverFunction = (RemoteInterface) Naming.lookup("//" + host + ":" + peer.peerIDIPMap.get( peer.neighborPeerID.get(0) ).getPort()  + "/" + "RMIserver");
-//                    System.out.println(serverFunction.helloworld());
-//                } catch (Exception e) {
-//                    System.out.println(e.getMessage());
-//                }
-//            }
+            System.out.println("ServerThread Running" + peer.type);
 
         }
-    }
-
-    public interface RemoteInterface extends Remote {
-        public String helloworld() throws RemoteException;
-        public void handleMessage(Message m) throws RemoteException;
     }
 
     public class ServerFunction extends UnicastRemoteObject implements RemoteInterface {
@@ -100,13 +77,11 @@ public class Node implements Runnable {
         }
 
         @Override
-        public String helloworld() throws RemoteException {
-            return "Hello World!";
-        }
-
-        @Override
-        public void handleMessage(Message m) throws RemoteException {
-            peer.handleMessage(m);
+        public void send(Message m) throws RemoteException {
+            System.out.println("Received: " +
+                               " Message id:" + m.getID() +
+                               " Message Type: " + m.getOperationType());
+            messageQueue.add(m);
         }
     }
 

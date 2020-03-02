@@ -30,11 +30,25 @@ public class Buyer extends Peer {
     }
 
     protected void handleLookUp(Message m) {
-        m.getRoutePath().add(ip);
+        // dont spread if node in the path
+        for(IP routeIP: m.getRoutePath()) {
+            if(ip.getAddr().equals(routeIP.getAddr()) && ip.getPort() == routeIP.getPort()) {
+                return;
+            }
+        }
+
+        // dont spread if step over MAX_HOP
+        if( m.getHop() >= m.MAX_HOP ){
+            return;
+        }
+        m.hopAddOne();
+
+        m.routePathAddRear(this.ip);
         spread(m);
     }
 
     protected void handleReply(Message m) {
+        /*
         if(peerID == m.getBuyerPeerID()) { // initial buyer
             try { // connect to seller directly
                 String host = InetAddress.getLocalHost().getHostAddress();
@@ -52,6 +66,7 @@ public class Buyer extends Peer {
             System.out.println("MessageID:" + m.getID() + ", Buyer " + this.peerID + ", handleReply " + m.getItemType() );
             backward(m);
         }
+        */
     }
 
     // No one will send "BUY" message to buyer
@@ -59,10 +74,15 @@ public class Buyer extends Peer {
         return;
     }
 
-    protected void LookUp(){
+    private void LookUp(){
+        // Create Message
         Message m = new Message().withOperationType(Message.Operation.LOOKUP)
                                  .withBuyerPeerID(this.peerID)
+                                 .withBuyerIP(this.ip)
                                  .withItemType( Math.abs(new Random().nextInt()%3) );
+        m.routePathAddRear(this.ip);
+        m.hopAddOne();
+
         System.out.println("MessageID:" + m.getID() + ", Buyer " + this.peerID + ", LookUp " + m.getItemType() );
         spread(m);
     }

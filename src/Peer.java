@@ -36,45 +36,43 @@ public class Peer {
     protected void handleReply(Message m) {};
     protected void handleBuy(Message m) {};
 
-    protected void LookUp() {};
-
 
     // When Seller send "REPLY" back to buyer, mid nodes need to pass message backward the routepath
     public void backward(Message m){
-        int lastIndex = m.getRoutePath().size() - 1;
-        IP prevIP = m.getRoutePath().remove(lastIndex);
-        try {
-            System.out.println("Reply to IP " + "//" + prevIP.getAddr() + ":" + prevIP.getPort() );
-            Node.RemoteInterface serverFunction = (Node.RemoteInterface) Naming.lookup("//" + prevIP.getAddr() + ":" + prevIP.getPort() + "/" + "RMIserver");
-            serverFunction.handleMessage(m);
-        } catch(Exception e) {
-            System.out.println(e.getMessage());
-        }
+        IP prevIP = m.routePathPopRear();
+        sendMessage(m, prevIP);
     }
 
     // Spread message to all its neighbor
     public void spread(Message m){
-        // node has been visited
-        for(IP routeIP: m.getRoutePath()) {
-            if(ip.getAddr().equals(routeIP.getAddr()) && ip.getPort() == routeIP.getPort()) {
-                return;
-            }
-        }
-
-        m.getRoutePath().add(ip);
-
         try {
-            String host = InetAddress.getLocalHost().getHostAddress();
             for (int peerID : peerIDIPMap.keySet()) {
-                IP ip = peerIDIPMap.get(peerID);
-                Node.RemoteInterface serverFunction = (Node.RemoteInterface) Naming.lookup("//" + host + ":" + ip.getPort() + "/" + "RMIserver");
-                serverFunction.handleMessage(m);
+                IP destIP = peerIDIPMap.get(peerID);
+                sendMessage(m, destIP);
             }
         } catch(Exception e) {
             System.out.println(e.getMessage());
         }
     }
 
+    public void sendMessage(Message m, IP desIP){
+        String RMIName = "RMIserver";
+        /*
+        System.out.println("Message id:" + m.getID() +
+                           " Message Type: " + m.getOperationType +
+                           " from " + this.ip.toString() +
+                           " to " + desIP.toString());
+        */
+        try {
+            String desHost = desIP.getAddr();
+            int desPort = desIP.getPort();
+            RemoteInterface serverFunction = (RemoteInterface) Naming.lookup("//" + desHost + ":" + desPort  + "/" + RMIName);
+            serverFunction.send(m);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
+    }
 
 
 }
