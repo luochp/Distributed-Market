@@ -8,13 +8,13 @@ public class Seller extends Peer {
 
     private int productType;        // Integer in range [0,2]
     private int stock = 0;
-    private Set<Message> holdSet;   // After received "LOOKUP" message, seller hold product and waiting "BUY" message
-                                    // Seller will discard message after messages' life time (for example, 100ms)
+    private HashMap<Integer, Message> holdSet = new HashMap<Integer, Message>();   // After received "LOOKUP" message, seller hold product and waiting "BUY" message
+                                                 // Seller will discard message after messages' life time (for example, 100ms)
 
     public Seller(int peerID, int peerType, IP ip, List<Integer> neighborPeerID, Map<Integer, IP> peerIDIPMap ){
         super(peerID, peerType, ip, neighborPeerID, peerIDIPMap);
         checkAndIniStock();
-        holdSet = new HashSet<Message>();
+        holdSet = new HashMap<Integer, Message>();
 
         new StockAndHoldSetCheckThread().start();
 
@@ -49,16 +49,16 @@ public class Seller extends Peer {
         m.hopAddOne();
 
         if ( m.getItemType() == productType && stock > holdSet.size() ){    // can provide goods
-            if ( holdSetHas(m) ) { // Replyed before
+            if ( holdSet.containsKey(m.getID()) ) { // Replyed before
                 return;
             }
             else{   // new lookup message
-                System.out.println( " Peer " + this.peerID +
-                                    " Reply LookUp from " + m.getBuyerPeerID() +
-                                    " for " + m.getItemType() +
+                System.out.println( "Peer " + this.peerID +
+                                    " Reply LookUp from peer " + m.getBuyerPeerID() +
+                                    " for product " + m.getItemType() +
                                     " MessageID " + m.getID() );
                 m.startHold(System.currentTimeMillis());
-                holdSet.add(m);
+                holdSet.put(m.getID(), m);
                 // send "REPLY" message
                 m = m.withOperationType(Message.Operation.REPLY)
                         .withSellerPeerID(peerID)
@@ -83,32 +83,21 @@ public class Seller extends Peer {
     }
 
     protected void handleBuy(Message m) {
-        System.out.println( " Peer " + this.peerID +
-                " received BUY from " + m.getBuyerPeerID() +
-                " for " + m.getItemType() +
+        System.out.println( "Peer " + this.peerID +
+                " received BUY from peer " + m.getBuyerPeerID() +
+                " for product " + m.getItemType() +
                 " and Sold it" +
                 " MessageID " + m.getID() );
-        holdSetRemove(m);
+        holdSet.remove(m.getID());
         stock--;
-    }
-
-    // Check if holdSet has message m inside
-    private boolean holdSetHas(Message inputM){
-        Iterator<Message> iterator = holdSet.iterator();
-        while (iterator.hasNext()) {
-            Message m = iterator.next();
-            if ( m.getID() == inputM.getID() ) {
-                return true;
-            }
-        }
-        return false;
     }
 
     // Delete messages that out of life time
     private void cleanHoldSet(){
-        Iterator<Message> iterator = holdSet.iterator();
+        Iterator<Map.Entry<Integer, Message>> iterator = holdSet.entrySet().iterator();
         while (iterator.hasNext()) {
-            Message m = iterator.next();
+            Map.Entry<Integer, Message> pair = (Map.Entry<Integer, Message>)iterator.next();
+            Message m = pair.getValue();
             if ( m.outDate(System.currentTimeMillis()) ) {
                 iterator.remove();
             }
@@ -119,16 +108,6 @@ public class Seller extends Peer {
         if (stock == 0){
             productType = Math.abs(new Random().nextInt()%3);
             stock = new Random().nextInt(5);
-        }
-    }
-
-    private void holdSetRemove(Message m){
-        Iterator<Message> iterator = holdSet.iterator();
-        while (iterator.hasNext()) {
-            Message msg = iterator.next();
-            if ( msg.getID() == m.getID() ) {
-                iterator.remove();
-            }
         }
     }
 

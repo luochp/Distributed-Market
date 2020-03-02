@@ -30,21 +30,6 @@ public class Buyer extends Peer {
         }
     }
 
-    public class CheckReplyMessageAndBuyThread extends Thread{
-        public void run() {
-            while(true){
-
-                LookUp();
-
-                try {
-                    Thread.sleep((int)(Node.INTERVAL_TIME/2));
-                } catch (Exception e) {
-                    System.out.println(e);
-                }
-            }
-        }
-    }
-
     protected void handleLookUp(Message m) {
         // dont spread if node in the path
         for(IP routeIP: m.getRoutePath()) {
