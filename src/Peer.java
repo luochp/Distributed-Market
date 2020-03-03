@@ -10,6 +10,8 @@ public class Peer {
     protected final List<Integer> neighborPeerID;
     protected final Map<Integer, IP> peerIDIPMap;    // neighborPeerID   ->    neighborIP
 
+    public static double avgRMICallDuration = 0;
+
     public Peer(int peerID, int peerType, IP ip, List<Integer> neighborPeerID, Map<Integer, IP> peerIDIPMap){
         this.type = peerType;
         this.peerID = peerID;
@@ -65,10 +67,25 @@ public class Peer {
                            " to " + desIP.toString());
         */
         try {
+
+            long TimeBeforeRMICall = System.currentTimeMillis();
+
             String desHost = desIP.getAddr();
             int desPort = desIP.getPort();
             RemoteInterface serverFunction = (RemoteInterface) Naming.lookup("//" + desHost + ":" + desPort  + "/" + RMIName);
             serverFunction.send(m);
+
+            // RMI Call Performance calculation
+            long TimeAfterRMICall = System.currentTimeMillis();
+            long RMICallDuration = TimeAfterRMICall - TimeBeforeRMICall;
+            if (avgRMICallDuration == 0){
+                avgRMICallDuration = RMICallDuration;
+            }
+            else
+                avgRMICallDuration = (double) ((avgRMICallDuration * 4 + RMICallDuration)/5);
+            System.out.println( "Duration = " + RMICallDuration  );
+            System.out.println( "Average RMICallDuration = " + avgRMICallDuration  );
+
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
