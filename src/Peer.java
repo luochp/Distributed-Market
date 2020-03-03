@@ -68,7 +68,7 @@ public class Peer {
         */
         try {
 
-            long TimeBeforeRMICall = System.currentTimeMillis();
+            // long TimeBeforeRMICall = System.currentTimeMillis();
 
             String desHost = desIP.getAddr();
             int desPort = desIP.getPort();
@@ -76,15 +76,17 @@ public class Peer {
             serverFunction.send(m);
 
             // RMI Call Performance calculation
+            /*
             long TimeAfterRMICall = System.currentTimeMillis();
             long RMICallDuration = TimeAfterRMICall - TimeBeforeRMICall;
             if (avgRMICallDuration == 0){
                 avgRMICallDuration = RMICallDuration;
             }
             else
-                avgRMICallDuration = (double) ((avgRMICallDuration * 4 + RMICallDuration)/5);
+                avgRMICallDuration = (double) ((avgRMICallDuration * 9 + RMICallDuration)/10);
             System.out.println( "Duration = " + RMICallDuration  );
             System.out.println( "Average RMICallDuration = " + avgRMICallDuration  );
+            */
 
         } catch (Exception e) {
             System.out.println(e.getMessage());

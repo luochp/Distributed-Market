@@ -12,6 +12,10 @@ public class Buyer extends Peer {
     private int currentRequestMessageID = 0;
     private HashSet<Message> replyPool = new HashSet<>();   // Record all replys from other sellers
 
+    private double avgLookUpDuration = 0;
+    private long beforeLookUpTime;
+    private long firstReplyTime;
+
     public Buyer(int peerID, int peerType, IP ip, List<Integer> neighborPeerID, Map<Integer, IP> peerIDIPMap ){
         super(peerID, peerType, ip, neighborPeerID, peerIDIPMap);
         new LookUpThread().start();
@@ -20,6 +24,7 @@ public class Buyer extends Peer {
     public class LookUpThread extends Thread{
         public void run() {
             while(true){
+                beforeLookUpTime = System.currentTimeMillis();
                 LookUp();
                 try {
                     Thread.sleep(Node.INTERVAL_TIME);
@@ -51,6 +56,17 @@ public class Buyer extends Peer {
     protected void handleReply(Message m) {
         if(peerID == m.getBuyerPeerID()) { // initial buyer
             if (currentRequestMessageID == m.getID()){
+                firstReplyTime = System.currentTimeMillis();
+                long LookUpDuration = firstReplyTime - beforeLookUpTime;
+                if (avgLookUpDuration == 0){
+                    avgLookUpDuration = LookUpDuration;
+                }
+                else
+                    avgLookUpDuration = (double) ((avgLookUpDuration * 9 + LookUpDuration)/10);
+                System.out.println( "Duration = " + LookUpDuration  );
+                System.out.println( "Average LookUpDuration = " + avgLookUpDuration  );
+
+
                 synchronized(replyPool){
                     replyPool.add( m );
                     return;
