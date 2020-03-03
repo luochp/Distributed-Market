@@ -1,0 +1,27 @@
+server ip
+elnux2 128.119.243.164
+elnux3 128.119.243.168
+elnux7 128.119.243.175
+
+How to start
+cd lab-1-hung-luo/src
+make clean
+make
+
+To start a node
+# peerType: 0 Buyer, 1 Seller, 2 BuyerAndSeller
+java Main ../test/[testfile] [peerType] 
+
+Not working cases
+OnlyBuyer.txt 
+OnlyBuyerAndSeller.txt
+NodeWithNoNeighbor.txt
+SelfNeighbored.txt
+
+Working cases
+MBuyerConcurr.txt
+MSellerConcurr.txt
+MSellerMBuyerConcurr.txt
+BuyerRouting.txt
+BuyerAndSellerRouting.txt
+FullyConnected.txt
