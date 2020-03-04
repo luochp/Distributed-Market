@@ -43,11 +43,20 @@ public class Peer {
     // When Seller send "REPLY" back to buyer, mid nodes need to pass message backward the routepath
     public void backward(Message m){
         IP prevIP = m.routePathPopRear();
+        /*
+        System.out.println("Peer " + this.peerID +
+                " Backward Message " + m.getOperationType() +
+                " to " + prevIP.toString());
+        */
         sendMessage(m, prevIP);
     }
 
     // Spread message to all its neighbor
     public void spread(Message m){
+        /*
+        System.out.println("Peer " + this.peerID +
+                " Spread Message " + m.getOperationType());
+        */
         try {
             for (int peerID : peerIDIPMap.keySet()) {
                 IP destIP = peerIDIPMap.get(peerID);
@@ -73,6 +82,11 @@ public class Peer {
             String desHost = desIP.getAddr();
             int desPort = desIP.getPort();
             RemoteInterface serverFunction = (RemoteInterface) Naming.lookup("//" + desHost + ":" + desPort  + "/" + RMIName);
+            /*
+            if( m == null ){
+                System.out.println( "message is NULL from" + this.peerID );
+            }
+            */
             serverFunction.send(m);
 
             // RMI Call Performance calculation

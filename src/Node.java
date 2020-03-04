@@ -6,6 +6,8 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class Node implements Runnable {
     private Peer peer;
@@ -13,14 +15,14 @@ public class Node implements Runnable {
     protected final IP ip;
     protected final int peerID;
 
-    public Queue<Message> messageQueue;
+    private BlockingQueue<Message> messageQueue;
 
-    public static int INTERVAL_TIME =  500;
+    public static int INTERVAL_TIME =  100;
 
     public Node(int peerID, int peerType, IP ip, List<Integer> neighborPeerID, Map<Integer, IP> peerIDIPMap){
         this.peerID = peerID;
         this.ip = ip;
-        this.messageQueue = new LinkedList<>();
+        this.messageQueue = new LinkedBlockingQueue<>();
         peerGeneration(peerID, peerType, ip, neighborPeerID, peerIDIPMap);
 
         new MessageQueueCheckThread().start();
@@ -99,11 +101,18 @@ public class Node implements Runnable {
     // If there is a message, then handle it
     // to prevent problems in paralle computing, we serialize message
     private void checkMessageQueue(){
+        /*
         synchronized (messageQueue){
             if( messageQueue.isEmpty() != true){
                 peer.handleMessage( messageQueue.poll() );
                 messageQueue.notifyAll();
             }
+        }
+        */
+        try{
+            peer.handleMessage(messageQueue.take());
+        } catch(Exception e) {
+            System.out.println(e.getMessage());
         }
     }
 

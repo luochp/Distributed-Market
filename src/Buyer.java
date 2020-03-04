@@ -15,6 +15,7 @@ public class Buyer extends Peer {
     private double avgLookUpDuration = 0;
     private long beforeLookUpTime;
     private long firstReplyTime;
+    private boolean firstReply = false;
 
     public Buyer(int peerID, int peerType, IP ip, List<Integer> neighborPeerID, Map<Integer, IP> peerIDIPMap ){
         super(peerID, peerType, ip, neighborPeerID, peerIDIPMap);
@@ -25,12 +26,14 @@ public class Buyer extends Peer {
         public void run() {
             while(true){
                 beforeLookUpTime = System.currentTimeMillis();
-                LookUp();
+                firstReply = true;
                 try {
+                    LookUp();
                     Thread.sleep(Node.INTERVAL_TIME);
                 } catch (Exception e) {
                     System.out.println(e);
                 }
+
             }
         }
     }
@@ -56,21 +59,24 @@ public class Buyer extends Peer {
     protected void handleReply(Message m) {
         if(peerID == m.getBuyerPeerID()) { // initial buyer
             if (currentRequestMessageID == m.getID()){
-                firstReplyTime = System.currentTimeMillis();
-                long LookUpDuration = firstReplyTime - beforeLookUpTime;
-                if (avgLookUpDuration == 0){
-                    avgLookUpDuration = LookUpDuration;
+
+                if(firstReply == true){
+                    firstReply = false;
+                    firstReplyTime = System.currentTimeMillis();
+                    long LookUpDuration = firstReplyTime - beforeLookUpTime;
+                    if (avgLookUpDuration == 0){
+                        avgLookUpDuration = LookUpDuration;
+                    }
+                    else
+                        avgLookUpDuration = (double) ((avgLookUpDuration * 29 + LookUpDuration)/30);
+                    System.out.println( "Duration = " + LookUpDuration  );
+                    System.out.println( "Average LookUpDuration = " + avgLookUpDuration  );
                 }
-                else
-                    avgLookUpDuration = (double) ((avgLookUpDuration * 9 + LookUpDuration)/10);
-                System.out.println( "Duration = " + LookUpDuration  );
-                System.out.println( "Average LookUpDuration = " + avgLookUpDuration  );
 
 
-                synchronized(replyPool){
-                    replyPool.add( m );
-                    return;
-                }
+                replyPool.add( m );
+                return;
+
             }
         } else { // mid node
             backward(m);
@@ -109,7 +115,7 @@ public class Buyer extends Peer {
         }
         public void run() {
             try {
-                Thread.sleep( (int)(Node.INTERVAL_TIME)/2 );
+                Thread.sleep( (int)(Node.INTERVAL_TIME/2) );
                 sendBuyMessage();
             }catch(InterruptedException ie){
                 System.out.println(ie);
@@ -119,9 +125,7 @@ public class Buyer extends Peer {
 
     private void sendBuyMessage(){
         Message buyM;
-        synchronized(replyPool) {
-            buyM = randomPickSeller();
-        }
+        buyM = randomPickSeller();
         if(buyM == null){
             System.out.println("No Seller found!" );
             return;
@@ -136,14 +140,14 @@ public class Buyer extends Peer {
     }
 
     private Message randomPickSeller(){
-        if(replyPool.size() > 0){
-            Iterator<Message> itr = replyPool.iterator();
-            if(itr.hasNext()){
-                Message m = itr.next();
-                return m;
+            if(replyPool.size() > 0){
+                Iterator<Message> itr = replyPool.iterator();
+                if(itr.hasNext()){
+                    Message m = itr.next();
+                    return m;
+                }
             }
-        }
-        return null;
+            return null;
     }
 
 }

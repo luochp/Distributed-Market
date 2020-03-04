@@ -14,7 +14,7 @@ public class Message implements Serializable{
     private int itemType;
     private int hop;
 
-    private static final long MAX_HOLD_TIME = Node.INTERVAL_TIME;
+    private static final long MAX_HOLD_TIME = (long)(Node.INTERVAL_TIME*2/3);
     private long holdStartTime;
 
     public Message(){

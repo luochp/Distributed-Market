@@ -26,7 +26,7 @@ public class Seller extends Peer {
                 cleanHoldSet();
                 checkAndIniStock();
                 try {
-                    Thread.sleep((int)(Node.INTERVAL_TIME/2));
+                    Thread.sleep((int)(Node.INTERVAL_TIME/6));
                 } catch (Exception e) {
                     System.out.println(e);
                 }
@@ -58,7 +58,9 @@ public class Seller extends Peer {
                                     " for product " + m.getItemType() +
                                     " MessageID " + m.getID() );
                 m.startHold(System.currentTimeMillis());
-                holdSet.put(m.getID(), m);
+                synchronized (holdSet){
+                    holdSet.put(m.getID(), m);
+                }
                 // send "REPLY" message
                 m = m.withOperationType(Message.Operation.REPLY)
                         .withSellerPeerID(peerID)

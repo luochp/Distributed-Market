@@ -28,8 +28,8 @@ public class BuyerAndSeller extends Peer {
     public class LookUpThread extends Thread{
         public void run() {
             while(true){
-                LookUp();
                 try {
+                    LookUp();
                     Thread.sleep(Node.INTERVAL_TIME);
                 } catch (Exception e) {
                     System.out.println(e);
@@ -44,7 +44,7 @@ public class BuyerAndSeller extends Peer {
                 cleanHoldSet();
                 checkAndIniStock();
                 try {
-                    Thread.sleep((int)(Node.INTERVAL_TIME/2));
+                    Thread.sleep((int)(Node.INTERVAL_TIME/6));
                 } catch (Exception e) {
                     System.out.println(e);
                 }
@@ -55,6 +55,8 @@ public class BuyerAndSeller extends Peer {
     // Same as seller handle LookUp
     protected void handleLookUp(Message m) {
         // dont spread if node in the path
+        if( m.getBuyerPeerID() == this.peerID )
+            return;
         for(IP routeIP: m.getRoutePath()) {
             if(ip.getAddr().equals(routeIP.getAddr()) && ip.getPort() == routeIP.getPort()) {
                 return;
