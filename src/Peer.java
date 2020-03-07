@@ -77,16 +77,12 @@ public class Peer {
         */
         try {
 
-            // long TimeBeforeRMICall = System.currentTimeMillis();
+            //long TimeBeforeRMICall = System.currentTimeMillis();
 
             String desHost = desIP.getAddr();
             int desPort = desIP.getPort();
             RemoteInterface serverFunction = (RemoteInterface) Naming.lookup("//" + desHost + ":" + desPort  + "/" + RMIName);
-            /*
-            if( m == null ){
-                System.out.println( "message is NULL from" + this.peerID );
-            }
-            */
+
             serverFunction.send(m);
 
             // RMI Call Performance calculation

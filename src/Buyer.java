@@ -59,7 +59,7 @@ public class Buyer extends Peer {
     protected void handleReply(Message m) {
         if(peerID == m.getBuyerPeerID()) { // initial buyer
             if (currentRequestMessageID == m.getID()){
-
+                /*
                 if(firstReply == true){
                     firstReply = false;
                     firstReplyTime = System.currentTimeMillis();
@@ -72,7 +72,7 @@ public class Buyer extends Peer {
                     System.out.println( "Duration = " + LookUpDuration  );
                     System.out.println( "Average LookUpDuration = " + avgLookUpDuration  );
                 }
-
+                */
 
                 replyPool.add( m );
                 return;
